@@ -1,0 +1,102 @@
+package snake;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+public class GameController extends KeyAdapter {
+
+    private Snake snake;
+    private Food food;
+    private int score;
+    private boolean gameOver;
+    private boolean gameStarted;
+
+    private static final int PANEL_WIDTH  = 400;
+    private static final int PANEL_HEIGHT = 400;
+    private static final int TILE_SIZE    = 20;
+
+    public GameController() {
+        initGame();
+    }
+
+    public void initGame() {
+        snake = new Snake(200, 200);
+        food  = new Food(100, 100);
+        score = 00;
+        gameOver    = false;
+        gameStarted = false;
+    }
+
+    public void update() {
+        if (!gameStarted || gameOver) return;
+
+        snake.move();
+
+        if (snake.hitWall(PANEL_WIDTH, PANEL_HEIGHT)) {
+            gameOver = true;
+            snake.setAlive(false);
+            return;
+        }
+
+        if (snake.hitSelf()) {
+            gameOver = true;
+            snake.setAlive(false);
+            return;
+        }
+
+        if (snake.ateFood(food)) {
+            snake.grow();
+            score += 5;
+            food.respawn(
+                (PANEL_WIDTH  / TILE_SIZE) - 1,
+                (PANEL_HEIGHT / TILE_SIZE) - 1
+            );
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+
+        if (!gameStarted) {
+            if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN
+             || key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
+                gameStarted = true;
+            }
+        }
+
+        if (key == KeyEvent.VK_UP && snake.getDirection() != Direction.DOWN) {
+            snake.setDirection(Direction.UP);
+        } else if (key == KeyEvent.VK_DOWN && snake.getDirection() != Direction.UP) {
+            snake.setDirection(Direction.DOWN);
+        } else if (key == KeyEvent.VK_LEFT && snake.getDirection() != Direction.RIGHT) {
+            snake.setDirection(Direction.LEFT);
+        } else if (key == KeyEvent.VK_RIGHT && snake.getDirection() != Direction.LEFT) {
+            snake.setDirection(Direction.RIGHT);
+        }
+
+        if (key == KeyEvent.VK_R && gameOver) {
+            initGame();
+        }
+    }
+
+    public Snake getSnake() {
+        return snake;
+    }
+
+    public Food getFood() {
+        return food;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+}
