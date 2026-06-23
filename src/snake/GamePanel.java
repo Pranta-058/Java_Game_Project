@@ -40,7 +40,10 @@ public class GamePanel extends JPanel {
         drawGrid(g);
 
         controller.getSnake().draw(g);
-        controller.getFood().draw(g);
+       // controller.getFood().draw(g);
+        for(Food food : controller.getFood()){
+            food.draw(g);
+        }
 
         drawScore(g);
 

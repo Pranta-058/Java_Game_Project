@@ -2,11 +2,13 @@ package snake;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameController extends KeyAdapter {
 
     private Snake snake;
-    private Food food;
+    private List<Food> foods;
     private int score;
     private boolean gameOver;
     private boolean gameStarted;
@@ -14,6 +16,7 @@ public class GameController extends KeyAdapter {
     private static final int PANEL_WIDTH  = 400;
     private static final int PANEL_HEIGHT = 400;
     private static final int TILE_SIZE    = 20;
+    private static final int FOOD_COUNT = 2;
 
     public GameController() {
         initGame();
@@ -21,7 +24,12 @@ public class GameController extends KeyAdapter {
 
     public void initGame() {
         snake = new Snake(200, 200);
-        food  = new Food(100, 100);
+        foods  = new ArrayList<>();
+        for(int i = 0; i < FOOD_COUNT; i++){
+            Food f = new Food(0,0);
+            f.respawn((PANEL_WIDTH/TILE_SIZE)-1,(PANEL_HEIGHT/TILE_SIZE)-1);
+            foods.add(f);
+        }
         score = 00;
         gameOver    = false;
         gameStarted = false;
@@ -43,14 +51,16 @@ public class GameController extends KeyAdapter {
             snake.setAlive(false);
             return;
         }
-
-        if (snake.ateFood(food)) {
-            snake.grow();
-            score += 5;
-            food.respawn(
-                (PANEL_WIDTH  / TILE_SIZE) - 1,
-                (PANEL_HEIGHT / TILE_SIZE) - 1
-            );
+        for(Food food : foods) {
+            if (snake.ateFood(food)) {
+                snake.grow();
+                score += 10;
+                food.respawn(
+                        (PANEL_WIDTH / TILE_SIZE) - 1,
+                        (PANEL_HEIGHT / TILE_SIZE) - 1
+                );
+                break;
+            }
         }
     }
 
@@ -84,8 +94,8 @@ public class GameController extends KeyAdapter {
         return snake;
     }
 
-    public Food getFood() {
-        return food;
+    public List<Food> getFood() {
+        return foods;
     }
 
     public int getScore() {

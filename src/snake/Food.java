@@ -12,7 +12,7 @@ public class Food extends GameObject {
 
     public Food(int x, int y) {
         super(x, y);
-        this.color = Color.YELLOW;
+        this.color = Color.RED;
     }
 
     public void respawn(int maxColumns, int maxRows) {
